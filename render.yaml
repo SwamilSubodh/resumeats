@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: resume-jd-analyser-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: FRONTEND_URL
+        sync: false
+      - key: MAX_FILE_SIZE_MB
+        value: 8
+      - key: ML_SERVICE_URL
+        value: https://resume-jd-analyser-ml.onrender.com
+      - key: GROQ_API_KEY
+        sync: false
+
+  - type: web
+    name: resume-jd-analyser-ml
+    env: python
+    rootDir: ml
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn predict:app --bind 0.0.0.0:$PORT
+    plan: free
+    envVars:
+      - key: PORT
+        value: 5001
